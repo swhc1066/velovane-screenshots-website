@@ -49,8 +49,8 @@
 
   body {
     font-family: var(--f-mono);
-    background: var(--surface-dark);
-    color: white;
+    background: #E8E8E8;
+    color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -60,10 +60,10 @@
   /* ================================ */
   .site-nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(17,17,17,0.92);
+    background: rgba(255,255,255,0.88);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+    border-bottom: 0.5px solid rgba(0,0,0,0.06);
   }
   .nav-inner {
     max-width: 1400px; margin: 0 auto;
@@ -75,21 +75,21 @@
   }
   .nav-logo svg { width: 20px; height: 21px; }
   .nav-logo span {
-    font-size: 14px; font-weight: 400; color: white; letter-spacing: 0;
+    font-size: 14px; font-weight: 400; color: var(--text-primary); letter-spacing: 0;
   }
   .nav-links {
     display: flex; gap: 4px;
   }
   .nav-link {
-    font-size: 11px; font-weight: 400; color: var(--n500);
+    font-size: 11px; font-weight: 400; color: var(--n600);
     text-decoration: none; padding: 6px 14px; border-radius: 6px;
     transition: all 0.15s ease; letter-spacing: 0.02em;
   }
   .nav-link:hover {
-    color: white; background: rgba(255,255,255,0.06);
+    color: var(--text-primary); background: rgba(0,0,0,0.04);
   }
   .nav-link.active {
-    color: white; background: rgba(255,255,255,0.08);
+    color: var(--text-primary); background: rgba(0,0,0,0.06);
   }
   .nav-tag {
     font-size: 9px; font-weight: 500; color: var(--vv-blue);
@@ -110,7 +110,7 @@
   }
   .hero::after {
     content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(17,17,17,0.3) 0%, rgba(17,17,17,0.1) 40%, rgba(17,17,17,0.6) 100%);
+    background: linear-gradient(180deg, rgba(17,17,17,0.25) 0%, rgba(17,17,17,0.05) 40%, rgba(17,17,17,0.5) 100%);
   }
   .hero-content { position: relative; z-index: 1; }
   .hero-logo { margin-bottom: 16px; }
@@ -120,12 +120,12 @@
     margin-bottom: 24px; text-shadow: 0 2px 20px rgba(0,0,0,0.2);
   }
   .hero-tagline {
-    font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.7);
-    max-width: 400px; line-height: 1.6; margin: 0 auto 8px;
+    font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.8);
+    max-width: 400px; line-height: normal; margin: 0 auto 8px;
     text-shadow: 0 1px 8px rgba(0,0,0,0.15);
   }
   .hero-sub {
-    font-size: 11px; font-weight: 300; color: rgba(255,255,255,0.4);
+    font-size: 12px; font-weight: 300; color: rgba(255,255,255,0.8);
     margin-top: 32px;
   }
   .scroll-hint {
@@ -133,12 +133,12 @@
     z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;
   }
   .scroll-hint span {
-    font-size: 9px; font-weight: 400; color: rgba(255,255,255,0.35);
+    font-size: 9px; font-weight: 400; color: rgba(255,255,255,0.5);
     letter-spacing: 0.12em; text-transform: uppercase;
   }
   .scroll-arrow {
-    width: 20px; height: 20px; border-right: 1px solid rgba(255,255,255,0.3);
-    border-bottom: 1px solid rgba(255,255,255,0.3);
+    width: 20px; height: 20px; border-right: 1px solid rgba(255,255,255,0.4);
+    border-bottom: 1px solid rgba(255,255,255,0.4);
     transform: rotate(45deg); animation: bounce 2s ease infinite;
   }
   @keyframes bounce {
@@ -161,15 +161,15 @@
     letter-spacing: 0.08em; display: block; margin-bottom: 8px;
   }
   .section-title {
-    font-size: 28px; font-weight: 300; color: white;
+    font-size: 28px; font-weight: 300; color: var(--text-primary);
     line-height: 1.25; margin-bottom: 10px;
   }
   .section-desc {
-    font-size: 13px; font-weight: 300; color: var(--n500);
+    font-size: 13px; font-weight: 300; color: var(--text-secondary);
     line-height: 1.65; max-width: 520px;
   }
   .section-divider {
-    height: 0.5px; background: rgba(255,255,255,0.06);
+    height: 0.5px; background: rgba(0,0,0,0.08);
     max-width: 1400px; margin: 0 auto;
   }
 
@@ -187,12 +187,12 @@
     display: flex; flex-direction: column; align-items: center;
   }
   .screen-title {
-    font-size: 11px; font-weight: 500; color: var(--n400);
+    font-size: 11px; font-weight: 500; color: var(--n600);
     letter-spacing: 0.06em; text-transform: uppercase;
     margin-bottom: 6px; text-align: center;
   }
   .screen-note {
-    font-size: 10px; font-weight: 300; color: var(--n600);
+    font-size: 10px; font-weight: 300; color: var(--n500);
     margin-bottom: 16px; text-align: center;
     max-width: 300px; line-height: 1.5;
   }
@@ -203,7 +203,7 @@
   .phone {
     width: 320px; height: 692px;
     border-radius: 40px; overflow: hidden;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
     position: relative; display: flex; flex-direction: column;
     flex-shrink: 0;
   }
@@ -523,12 +523,12 @@
   .site-footer {
     padding: 60px 40px 40px;
     text-align: center;
-    border-top: 0.5px solid rgba(255,255,255,0.06);
+    border-top: 0.5px solid rgba(0,0,0,0.08);
   }
   .footer-logo { margin-bottom: 12px; }
   .footer-logo svg { width: 24px; height: 25px; opacity: 0.4; }
   .footer-text {
-    font-size: 10px; font-weight: 300; color: var(--n600);
+    font-size: 10px; font-weight: 300; color: var(--n500);
     line-height: 1.8;
   }
 
