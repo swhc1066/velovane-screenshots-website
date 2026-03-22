@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeloVane — Onboarding Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vv-blue: #5BA4D4;
+    --vv-blue-light: #E8F2FA;
+    --vv-blue-dark: #3A7BAD;
+    --vv-blue-darker: #265A82;
+    --text-primary: #000000;
+    --text-secondary: #5C5F66;
+    --text-tertiary: #B2B2B2;
+    --surface-white: #FFFFFF;
+    --surface-light: #F8F9FA;
+    --surface-dark: #111111;
+    --n50: #F8F9FA;
+    --n100: #F1F3F5;
+    --n200: #E5E5E5;
+    --n300: #D4D4D4;
+    --go-light: #E8F5E9;
+    --go-dark: #2E7D32;
+    --f-mono: "Geist Mono", "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--f-mono);
+    background: #E5E5E5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .page-subtitle {
+    font-size: 11px;
+    font-weight: 300;
+    color: #999;
+    margin-bottom: 40px;
+  }
+
+  .flow-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 390px);
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 1280px) {
+    .flow-grid { grid-template-columns: repeat(2, 390px); }
+  }
+  @media (max-width: 860px) {
+    .flow-grid { grid-template-columns: 390px; }
+  }
+
+  .screen-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #888;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .screen-desc {
+    font-size: 10px;
+    font-weight: 300;
+    color: #aaa;
+    margin-bottom: 14px;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* Phone frame */
+  .phone-frame {
+    width: 390px;
+    height: 780px;
+    background: var(--surface-dark);
+    border-radius: 44px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.08);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .phone-frame.light {
+    background: var(--surface-white);
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .status-bar.dark { color: white; }
+  .status-bar.light { color: black; }
+  .status-time {
+    font-family: var(--f-mono);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons svg { width: 16px; height: 16px; fill: currentColor; }
+
+  /* Screen content */
+  .screen-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 28px;
+    overflow: hidden;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    padding: 12px 0 24px;
+    display: flex;
+    gap: 3px;
+  }
+  .progress-dot {
+    flex: 1;
+    height: 3px;
+    border-radius: 1.5px;
+    background: rgba(255,255,255,0.12);
+  }
+  .progress-dot.light-bg {
+    background: var(--n200);
+  }
+  .progress-dot.active {
+    background: var(--vv-blue);
+  }
+  .progress-dot.done {
+    background: rgba(255,255,255,0.35);
+  }
+  .progress-dot.done.light-bg {
+    background: var(--n300);
+  }
+
+  /* Dark screen elements */
+  .dark-heading {
+    font-size: 24px;
+    font-weight: 300;
+    color: white;
+    line-height: 1.35;
+    margin-bottom: 16px;
+  }
+  .dark-body {
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+  .dark-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 10px;
+  }
+
+  /* Light screen elements */
+  .light-heading {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--text-primary);
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+  .light-helper {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    line-height: 1.55;
+    margin-bottom: 28px;
+  }
+
+  /* Slider control */
+  .slider-wrap {
+    margin-bottom: 20px;
+  }
+  .slider-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 16px;
+  }
+  .slider-value-display {
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+  .slider-track {
+    width: 100%;
+    height: 4px;
+    background: var(--n200);
+    border-radius: 2px;
+    position: relative;
+    margin-bottom: 8px;
+  }
+  .slider-fill {
+    height: 4px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    position: absolute;
+    left: 0;
+  }
+  .slider-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--text-primary);
+    border-radius: 50%;
+    position: absolute;
+    top: -8px;
+    transform: translateX(-50%);
+  }
+  .slider-range {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+  }
+
+  /* Dual slider */
+  .dual-slider-track {
+    width: 100%;
+    height: 4px;
+    background: var(--n200);
+    border-radius: 2px;
+    position: relative;
+    margin-bottom: 8px;
+  }
+  .dual-slider-active {
+    height: 4px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    position: absolute;
+  }
+  .dual-slider-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--text-primary);
+    border-radius: 50%;
+    position: absolute;
+    top: -8px;
+    transform: translateX(-50%);
+  }
+
+  /* Multi-select pills */
+  .pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .pill {
+    padding: 10px 16px;
+    border: 1px solid var(--n200);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    background: white;
+  }
+  .pill.selected {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+    background: var(--n50);
+    font-weight: 500;
+  }
+
+  /* Day circles */
+  .day-grid {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .day-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--n200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+  }
+  .day-circle.selected {
+    background: var(--text-primary);
+    border-color: var(--text-primary);
+    color: white;
+    font-weight: 500;
+  }
+
+  /* Ride pattern cards */
+  .pattern-card {
+    border: 1px solid var(--n200);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .pattern-card.selected {
+    border-color: var(--text-primary);
+    background: var(--n50);
+  }
+  .pattern-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .pattern-desc {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+  }
+  .pattern-badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--vv-blue-dark);
+    background: var(--vv-blue-light);
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+  }
+
+  /* CTA button */
+  .cta-area {
+    margin-top: auto;
+    padding: 20px 0 36px;
+  }
+  .cta-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--f-mono);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+  }
+  .cta-btn.dark {
+    background: white;
+    color: var(--surface-dark);
+  }
+  .cta-btn.light {
+    background: var(--text-primary);
+    color: white;
+  }
+  .cta-secondary {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 11px;
+    font-weight: 300;
+  }
+  .cta-secondary a {
+    color: var(--text-tertiary);
+    text-decoration: none;
+  }
+
+  /* Preview card (value framing) */
+  .preview-card {
+    background: rgba(255,255,255,0.05);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 24px;
+  }
+  .preview-card-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .preview-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--vv-blue);
+  }
+  .preview-status {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vv-blue);
+  }
+  .preview-window {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 4px;
+  }
+  .preview-reason {
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.5;
+  }
+
+  /* Summary card */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .summary-item {
+    background: var(--n50);
+    border-radius: 6px;
+    padding: 12px;
+  }
+  .summary-item-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+  }
+  .summary-item-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .summary-item-tap {
+    font-size: 9px;
+    font-weight: 300;
+    color: var(--vv-blue-dark);
+    margin-top: 4px;
+  }
+  .summary-item.full {
+    grid-column: 1 / -1;
+  }
+
+  /* Logo */
+  .logo-mark {
+    margin-bottom: 32px;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">VeloVane — Onboarding Flow</div>
+<div class="page-subtitle">9 steps: Value framing → 7 questions → Confirmation summary</div>
+
+<!-- Row 1: Splash → Value Framing → Q1 -->
+<div class="flow-grid">
+
+  <!-- SPLASH / AUTH -->
+  <div>
+    <div class="screen-label">Splash / Login</div>
+    <div class="screen-desc">Dark surface. Entry point.</div>
+    <div class="phone-frame">
+      <div class="status-bar dark">
+        <span class="status-time" style="color:white;">6:42</span>
+        <div class="status-icons" style="color:white;">
+          <svg viewBox="0 0 16 16"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg>
+        </div>
+      </div>
+      <div class="screen-body" style="justify-content: center; align-items: center; text-align: center;">
+        <div class="logo-mark">
+          <svg width="40" height="42" viewBox="0 0 27 28" fill="none">
+            <path d="M0 8.40756V0.784399C0 0.354434 0.348624 0 0.784399 0H7.01308C7.29197 0 7.55345 0.151068 7.6929 0.389291L18.5524 19.2032C18.6221 19.3194 18.657 19.4588 18.657 19.5925V27.2156C18.657 27.6456 18.3084 28 17.8726 28H11.6439C11.365 28 11.1035 27.8489 10.9641 27.6107L0.104599 8.79685C0.0348755 8.68064 0 8.54119 0 8.40756Z" fill="#5BA4D4"/>
+            <path d="M18.9185 2.00462L22.12 0.156941C22.2827 0.0639758 22.486 0.0639758 22.6487 0.156941L25.8502 2.00462C26.0129 2.09759 26.1175 2.2719 26.1175 2.46365V10.4703C26.1175 10.662 26.0187 10.8363 25.8502 10.9293L19.4472 14.6247C19.0928 14.828 18.6512 14.5724 18.6512 14.1657V2.46365C18.6512 2.2719 18.75 2.09759 18.9185 2.00462Z" fill="#5BA4D4"/>
+          </svg>
+        </div>
+        <div style="font-size: 28px; font-weight: 400; color: white; margin-bottom: 48px;">velovane</div>
+        <div style="width: 100%; padding: 0 20px;">
+          <div class="cta-btn dark" style="margin-bottom: 10px;">Continue with Apple</div>
+          <div class="cta-btn" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; margin-bottom: 10px;">Continue with Google</div>
+          <div class="cta-btn" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white;">Sign up with email</div>
+          <div class="cta-secondary"><a href="#" style="color: rgba(255,255,255,0.4);">Already have an account? Log in</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 0: VALUE FRAMING -->
+  <div>
+    <div class="screen-label">Step 0 — Value Framing</div>
+    <div class="screen-desc">Sets the contract: your data → your intelligence.</div>
+    <div class="phone-frame">
+      <div class="status-bar dark">
+        <span class="status-time" style="color:white;">6:42</span>
+        <div class="status-icons" style="color:white;">
+          <svg viewBox="0 0 16 16"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg>
+        </div>
+      </div>
+      <div class="screen-body">
+        <div class="progress-wrap">
+          <div class="progress-dot active"></div>
+          <div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div>
+          <div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div>
+          <div class="progress-dot"></div><div class="progress-dot"></div>
+        </div>
+        <div class="dark-heading">Your preferences power your personal ride advisor.</div>
+        <div class="dark-body">The more accurate you are, the better your recommendations from day one. Takes about 60 seconds.</div>
+
+        <div class="dark-label">What you'll get</div>
+        <div class="preview-card">
+          <div class="preview-card-header">
+            <div class="preview-dot"></div>
+            <span class="preview-status">Go — ride window</span>
+          </div>
+          <div class="preview-window">7:00 – 9:30 AM</div>
+          <div class="preview-reason">Personalized to your wind limit, temperature range, and preferred ride times.</div>
+        </div>
+
+        <div class="cta-area">
+          <div class="cta-btn dark">Let's go</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q1: Ride Duration -->
+  <div>
+    <div class="screen-label">Step 1 — Ride Duration</div>
+    <div class="screen-desc">Slider: 30–180 min. Default 75 min.</div>
+    <div class="phone-frame light">
+      <div class="status-bar light">
+        <span class="status-time">6:43</span>
+        <div class="status-icons"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg></div>
+      </div>
+      <div class="screen-body">
+        <div class="progress-wrap">
+          <div class="progress-dot done light-bg"></div>
+          <div class="progress-dot active light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+          <div class="progress-dot light-bg"></div>
+        </div>
+        <div class="light-heading">How long do you usually ride?</div>
+        <div class="light-helper">This helps VeloVane find ride windows that fit your schedule.</div>
+
+        <div class="slider-wrap">
+          <div class="slider-value-display">75 min</div>
+          <div class="slider-track">
+            <div class="slider-fill" style="width: 30%;"></div>
+            <div class="slider-thumb" style="left: 30%;"></div>
+          </div>
+          <div class="slider-range"><span>30 min</span><span>180 min</span></div>
+        </div>
+
+        <div class="cta-area">
+          <div class="cta-btn light">Next</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Row 2: Q2 → Q3 → Q4 -->
+<div class="flow-grid">
+
+  <!-- Q2: Wind Threshold -->
+  <div>
+    <div class="screen-label">Step 2 — Wind Limit</div>
+    <div class="screen-desc">Slider: 10–30 mph. Default 20 mph.</div>
+    <div class="phone-frame light">
+      <div class="status-bar light">
+        <span class="status-time">6:43</span>
+        <div class="status-icons"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg></div>
+      </div>
+      <div class="screen-body">
+        <div class="progress-wrap">
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot active light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+        </div>
+        <div class="light-heading">What's your wind speed limit?</div>
+        <div class="light-helper">Above this, VeloVane will tell you to skip the ride.</div>
+
+        <div class="slider-wrap">
+          <div class="slider-value-display">20 mph</div>
+          <div class="slider-track">
+            <div class="slider-fill" style="width: 50%;"></div>
+            <div class="slider-thumb" style="left: 50%;"></div>
+          </div>
+          <div class="slider-range"><span>10 mph</span><span>30 mph</span></div>
+        </div>
+
+        <div class="cta-area">
+          <div class="cta-btn light">Next</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3: Temp Range -->
+  <div>
+    <div class="screen-label">Step 3 — Temperature Range</div>
+    <div class="screen-desc">Dual slider: 30°F–100°F.</div>
+    <div class="phone-frame light">
+      <div class="status-bar light">
+        <span class="status-time">6:43</span>
+        <div class="status-icons"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg></div>
+      </div>
+      <div class="screen-body">
+        <div class="progress-wrap">
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div>
+          <div class="progress-dot active light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+          <div class="progress-dot light-bg"></div>
+        </div>
+        <div class="light-heading">What temperature range are you comfortable in?</div>
+        <div class="light-helper">VeloVane will flag conditions outside this range.</div>
+
+        <div class="slider-wrap">
+          <div class="slider-value-display">45°F – 90°F</div>
+          <div class="dual-slider-track">
+            <div class="dual-slider-active" style="left: 21%; width: 57%;"></div>
+            <div class="dual-slider-thumb" style="left: 21%;"></div>
+            <div class="dual-slider-thumb" style="left: 78%;"></div>
+          </div>
+          <div class="slider-range"><span>30°F</span><span>100°F</span></div>
+        </div>
+
+        <div class="cta-area">
+          <div class="cta-btn light">Next</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4: Preferred Times -->
+  <div>
+    <div class="screen-label">Step 4 — Ride Times</div>
+    <div class="screen-desc">Multi-select pills.</div>
+    <div class="phone-frame light">
+      <div class="status-bar light">
+        <span class="status-time">6:44</span>
+        <div class="status-icons"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg></div>
+      </div>
+      <div class="screen-body">
+        <div class="progress-wrap">
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot active light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+        </div>
+        <div class="light-heading">When do you prefer to ride?</div>
+        <div class="light-helper">Select all that apply. VeloVane will prioritize these windows.</div>
+
+        <div class="pill-grid">
+          <div class="pill selected">Early morning</div>
+          <div class="pill selected">Morning</div>
+          <div class="pill">Midday</div>
+          <div class="pill">Afternoon</div>
+          <div class="pill">Evening</div>
+        </div>
+
+        <div class="cta-area">
+          <div class="cta-btn light">Next</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Row 3: Q5 → Q6 → Q7 -->
+<div class="flow-grid">
+
+  <!-- Q5: Riding Days -->
+  <div>
+    <div class="screen-label">Step 5 — Riding Days</div>
+    <div class="screen-desc">Multi-select day circles.</div>
+    <div class="phone-frame light">
+      <div class="status-bar light">
+        <span class="status-time">6:44</span>
+        <div class="status-icons"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg></div>
+      </div>
+      <div class="screen-body">
+        <div class="progress-wrap">
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div>
+          <div class="progress-dot active light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+          <div class="progress-dot light-bg"></div>
+        </div>
+        <div class="light-heading">Which days do you ride?</div>
+        <div class="light-helper">Notifications will only come on these days.</div>
+
+        <div class="day-grid">
+          <div class="day-circle selected">M</div>
+          <div class="day-circle selected">T</div>
+          <div class="day-circle selected">W</div>
+          <div class="day-circle selected">T</div>
+          <div class="day-circle selected">F</div>
+          <div class="day-circle">S</div>
+          <div class="day-circle selected">S</div>
+        </div>
+
+        <div class="cta-area">
+          <div class="cta-btn light">Next</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q6: Riding Speed -->
+  <div>
+    <div class="screen-label">Step 6 — Riding Speed</div>
+    <div class="screen-desc">For cycling-specific feels-like calc.</div>
+    <div class="phone-frame light">
+      <div class="status-bar light">
+        <span class="status-time">6:44</span>
+        <div class="status-icons"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg></div>
+      </div>
+      <div class="screen-body">
+        <div class="progress-wrap">
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot active light-bg"></div>
+          <div class="progress-dot light-bg"></div><div class="progress-dot light-bg"></div>
+        </div>
+        <div class="light-heading">What's your average riding speed?</div>
+        <div class="light-helper">This is used to calculate how the temperature actually feels on the bike at your speed.</div>
+
+        <div class="slider-wrap">
+          <div class="slider-value-display">16 mph</div>
+          <div class="slider-track">
+            <div class="slider-fill" style="width: 40%;"></div>
+            <div class="slider-thumb" style="left: 40%;"></div>
+          </div>
+          <div class="slider-range"><span>10 mph</span><span>25 mph</span></div>
+        </div>
+
+        <div class="cta-area">
+          <div class="cta-btn light">Next</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7: Ride Pattern -->
+  <div>
+    <div class="screen-label">Step 7 — Ride Pattern</div>
+    <div class="screen-desc">Out-and-back (default) vs fixed route.</div>
+    <div class="phone-frame light">
+      <div class="status-bar light">
+        <span class="status-time">6:44</span>
+        <div class="status-icons"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg></div>
+      </div>
+      <div class="screen-body">
+        <div class="progress-wrap">
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div>
+          <div class="progress-dot active light-bg"></div>
+          <div class="progress-dot light-bg"></div>
+        </div>
+        <div class="light-heading">How do you typically ride?</div>
+        <div class="light-helper">This changes how VeloVane interprets wind data for you.</div>
+
+        <div class="pattern-card selected">
+          <div class="pattern-badge">Default</div>
+          <div class="pattern-title">Out and back</div>
+          <div class="pattern-desc">I leave from home and return the same way. I pick my direction based on the wind.</div>
+        </div>
+
+        <div class="pattern-card">
+          <div class="pattern-title">Fixed route</div>
+          <div class="pattern-desc">I ride the same route/direction most days.</div>
+        </div>
+
+        <div class="cta-area">
+          <div class="cta-btn light">Next</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Row 4: Summary -->
+<div class="flow-grid">
+
+  <!-- SUMMARY / CONFIRMATION -->
+  <div>
+    <div class="screen-label">Step 8 — Confirmation</div>
+    <div class="screen-desc">Tap any value to edit. Save once on confirm.</div>
+    <div class="phone-frame light">
+      <div class="status-bar light">
+        <span class="status-time">6:45</span>
+        <div class="status-icons"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg></div>
+      </div>
+      <div class="screen-body">
+        <div class="progress-wrap">
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot done light-bg"></div><div class="progress-dot done light-bg"></div>
+          <div class="progress-dot active light-bg"></div>
+        </div>
+        <div class="light-heading">Your rider profile</div>
+        <div class="light-helper">Tap any value to change it. This is what powers your recommendations.</div>
+
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-item-label">Duration</div>
+            <div class="summary-item-value">75 min</div>
+            <div class="summary-item-tap">Tap to edit</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">Wind limit</div>
+            <div class="summary-item-value">20 mph</div>
+            <div class="summary-item-tap">Tap to edit</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">Temp range</div>
+            <div class="summary-item-value">45° – 90°F</div>
+            <div class="summary-item-tap">Tap to edit</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">Ride times</div>
+            <div class="summary-item-value">AM</div>
+            <div class="summary-item-tap">Tap to edit</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">Speed</div>
+            <div class="summary-item-value">16 mph</div>
+            <div class="summary-item-tap">Tap to edit</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">Days</div>
+            <div class="summary-item-value">M-F, Su</div>
+            <div class="summary-item-tap">Tap to edit</div>
+          </div>
+          <div class="summary-item full">
+            <div class="summary-item-label">Ride pattern</div>
+            <div class="summary-item-value">Out and back</div>
+            <div class="summary-item-tap">Tap to edit</div>
+          </div>
+        </div>
+
+        <div class="cta-area">
+          <div class="cta-btn light">Looks good</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOCATION PERMISSION -->
+  <div>
+    <div class="screen-label">Post-Onboarding — Location</div>
+    <div class="screen-desc">Transparent, cyclist-specific explanation.</div>
+    <div class="phone-frame">
+      <div class="status-bar dark">
+        <span class="status-time" style="color:white;">6:45</span>
+        <div class="status-icons" style="color:white;">
+          <svg viewBox="0 0 16 16"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg>
+        </div>
+      </div>
+      <div class="screen-body" style="justify-content: center;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#5BA4D4" stroke-width="1.5">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="dark-heading" style="text-align: center;">Local weather, zero effort.</div>
+        <div class="dark-body" style="text-align: center;">VeloVane uses your location to pull local weather data. Over time, it can also learn from your rides to improve recommendations — but that's optional and you're always in control.</div>
+        <div style="padding: 0 0 36px;">
+          <div class="cta-btn dark" style="margin-bottom: 10px;">Enable location</div>
+          <div class="cta-btn" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5);">Not now</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

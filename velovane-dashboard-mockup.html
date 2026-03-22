@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeloVane — Dashboard Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Core brand */
+    --vv-blue: #5BA4D4;
+    --vv-blue-light: #E8F2FA;
+    --vv-blue-mid: #8FC1E2;
+    --vv-blue-dark: #3A7BAD;
+    --vv-blue-darker: #265A82;
+
+    /* Text hierarchy */
+    --text-primary: #000000;
+    --text-secondary: #5C5F66;
+    --text-tertiary: #B2B2B2;
+
+    /* Surfaces */
+    --surface-white: #FFFFFF;
+    --surface-light: #F8F9FA;
+    --surface-dark: #111111;
+
+    /* Neutrals */
+    --n50: #F8F9FA;
+    --n100: #F1F3F5;
+    --n200: #E5E5E5;
+    --n300: #D4D4D4;
+    --n400: #B2B2B2;
+    --n500: #8C8C8C;
+    --n600: #5C5F66;
+
+    /* Semantic */
+    --go-light: #E8F5E9;
+    --go-mid: #4CAF50;
+    --go-dark: #2E7D32;
+    --caution-light: #FFF8E1;
+    --caution-mid: #F9A825;
+    --caution-dark: #F57F17;
+    --skip-light: #FFEBEE;
+    --skip-mid: #EF5350;
+    --skip-dark: #C62828;
+
+    /* Typography */
+    --f-mono: "Geist Mono", "SF Mono", "Fira Code", "Cascadia Code", monospace;
+
+    /* Spacing */
+    --xs: 4px;
+    --sm: 8px;
+    --md: 12px;
+    --lg: 16px;
+    --xl: 24px;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--f-mono);
+    background: #E5E5E5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Phone frame */
+  .phone-frame {
+    width: 390px;
+    height: 844px;
+    background: var(--surface-white);
+    border-radius: 44px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.08);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    background: var(--surface-white);
+  }
+  .status-time {
+    font-family: var(--f-mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .status-icons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .status-icons svg { width: 16px; height: 16px; }
+
+  /* Scrollable content */
+  .screen-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 var(--xl) 32px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen-content::-webkit-scrollbar { display: none; }
+
+  /* Location header */
+  .location-card {
+    padding: 12px 0 16px;
+    border-bottom: 0.5px solid var(--n200);
+  }
+  .location-label {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .location-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .location-name {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .location-time {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+  }
+
+  /* AI Recommendation Card */
+  .rec-card {
+    margin: 16px 0;
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .rec-card.go { background: var(--go-light); }
+  .rec-card.caution { background: var(--caution-light); }
+  .rec-card.skip { background: var(--skip-light); }
+
+  .rec-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .rec-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .rec-card.go .rec-dot { background: var(--go-dark); }
+  .rec-card.caution .rec-dot { background: var(--caution-dark); }
+  .rec-card.skip .rec-dot { background: var(--skip-dark); }
+
+  .rec-status {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .rec-card.go .rec-status { color: var(--go-dark); }
+  .rec-card.caution .rec-status { color: var(--caution-dark); }
+
+  .rec-window {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .rec-reason {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+  .rec-details {
+    display: flex;
+    gap: 16px;
+  }
+  .rec-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .rec-detail-label {
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+  .rec-detail-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .rec-expand {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    text-align: right;
+    margin-top: 10px;
+  }
+
+  /* Temperature card */
+  .temp-card {
+    padding: 20px 0;
+    border-bottom: 0.5px solid var(--n200);
+  }
+  .temp-card-label {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .temp-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .temp-current {
+    font-size: 64px;
+    font-weight: 300;
+    color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+  .temp-unit {
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+  }
+  .temp-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .temp-feels {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+  .temp-hilo {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+  }
+
+  /* Wind card */
+  .wind-card {
+    padding: 20px 0;
+    border-bottom: 0.5px solid var(--n200);
+  }
+  .wind-card-label {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .wind-main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .wind-speed-big {
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .wind-speed-unit {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+  }
+  .wind-arrow-big {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wind-arrow-big svg {
+    transition: transform 300ms ease;
+  }
+  .wind-context {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 4px;
+  }
+  .wind-gust {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+  }
+
+  /* Hourly scroll */
+  .hourly-section {
+    padding: 20px 0;
+    border-bottom: 0.5px solid var(--n200);
+  }
+  .hourly-label {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hourly-scroll {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    margin: 0 calc(-1 * var(--xl));
+    padding: 0 var(--xl);
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .hourly-scroll::-webkit-scrollbar { display: none; }
+
+  .hourly-cell {
+    min-width: 56px;
+    padding: 10px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    border-right: 0.5px solid var(--n100);
+  }
+  .hourly-cell:last-child { border-right: none; }
+  .hourly-cell.now {
+    background: var(--n50);
+    border-radius: 6px;
+    border-right: none;
+  }
+  .hourly-cell.dusk {
+    background: rgba(0,0,0,0.02);
+  }
+
+  .hourly-time {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+  }
+  .hourly-cell.now .hourly-time {
+    font-weight: 500;
+    color: var(--vv-blue-dark);
+  }
+  .hourly-temp {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .hourly-wind-arrow {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hourly-wind-arrow svg {
+    color: var(--text-secondary);
+    transition: transform 300ms ease;
+  }
+  .hourly-wind-speed {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+  .hourly-precip {
+    font-size: 9px;
+    font-weight: 300;
+    color: var(--vv-blue-dark);
+  }
+  .hourly-sunrise {
+    font-size: 8px;
+    font-weight: 400;
+    color: var(--caution-dark);
+  }
+
+  /* 7-day view */
+  .daily-section {
+    padding: 20px 0;
+  }
+  .daily-label {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .daily-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--n100);
+    gap: 8px;
+  }
+  .daily-row:last-child { border-bottom: none; }
+  .daily-row.faded {
+    opacity: 0.55;
+  }
+  .daily-day {
+    width: 42px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    flex-shrink: 0;
+  }
+  .daily-row.faded .daily-day {
+    font-weight: 400;
+  }
+  .daily-icon {
+    width: 20px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 14px;
+  }
+  .daily-temp-range {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .daily-hi {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    width: 32px;
+  }
+  .daily-lo {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    width: 32px;
+  }
+  .daily-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--n100);
+    border-radius: 2px;
+    position: relative;
+  }
+  .daily-bar {
+    position: absolute;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--vv-blue-mid), var(--caution-mid));
+  }
+  .daily-wind {
+    width: 52px;
+    text-align: right;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+  .daily-precip {
+    width: 30px;
+    text-align: right;
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--vv-blue-dark);
+    flex-shrink: 0;
+  }
+  .daily-confidence {
+    font-size: 9px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    text-align: center;
+    padding: 6px 0 0;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    height: 72px;
+    border-top: 0.5px solid var(--n200);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 24px 8px;
+    flex-shrink: 0;
+    background: var(--surface-white);
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .nav-item svg { width: 22px; height: 22px; }
+  .nav-item span {
+    font-size: 9px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    letter-spacing: 0.04em;
+  }
+  .nav-item.active svg { color: var(--text-primary); }
+  .nav-item.active span { color: var(--text-primary); font-weight: 500; }
+
+  /* Annotation layer */
+  .mockup-wrapper {
+    position: relative;
+  }
+  .mockup-label {
+    position: absolute;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 400;
+    color: #888;
+    white-space: nowrap;
+  }
+  .page-title {
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 24px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .page-subtitle {
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 300;
+    color: #999;
+    margin-bottom: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <div class="page-title">VeloVane — Dashboard</div>
+  <div class="page-subtitle">Primary screen · Seen 90% of the time · Real weather data layout</div>
+
+  <div class="mockup-wrapper">
+    <div class="phone-frame">
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span class="status-time">6:42</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z" fill="currentColor"/></svg>
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 3C5.5 3 3.2 4 1.5 5.7l1.4 1.4C4.4 5.6 6.1 5 8 5s3.6.6 5.1 1.7l1.4-1.4C12.8 4 10.5 3 8 3zm0 4c-1.5 0-2.8.6-3.8 1.5L5.6 10c.7-.6 1.5-1 2.4-1s1.7.4 2.4 1l1.4-1.4C10.8 7.6 9.5 7 8 7zm0 4c-.6 0-1.1.2-1.5.6L8 13.2l1.5-1.5C9.1 11.2 8.6 11 8 11z" fill="currentColor"/></svg>
+          <svg viewBox="0 0 20 12" fill="none"><rect x="0.5" y="0.5" width="16" height="11" rx="2" stroke="currentColor"/><rect x="2" y="2" width="10" height="8" rx="1" fill="currentColor"/><path d="M18 4.5v3a1.5 1.5 0 000-3z" fill="currentColor"/></svg>
+        </div>
+      </div>
+
+      <div class="screen-content">
+
+        <!-- Location -->
+        <div class="location-card">
+          <div class="location-label">Current location</div>
+          <div class="location-row">
+            <span class="location-name">Omaha, NE</span>
+            <span class="location-time">Updated 6:40 AM</span>
+          </div>
+        </div>
+
+        <!-- AI Recommendation Card -->
+        <div class="rec-card go">
+          <div class="rec-header">
+            <div class="rec-dot"></div>
+            <span class="rec-status">Go — ride window</span>
+          </div>
+          <div class="rec-window">7:00 – 9:30 AM</div>
+          <div class="rec-reason">Based on your 20mph wind limit and morning preference, this window is clean. Steady 12mph from the west — easy out-and-back planning.</div>
+          <div class="rec-details">
+            <div class="rec-detail-item">
+              <span class="rec-detail-label">Temp</span>
+              <span class="rec-detail-value">58° (52° on bike)</span>
+            </div>
+            <div class="rec-detail-item">
+              <span class="rec-detail-label">Wind</span>
+              <span class="rec-detail-value">12mph W, steady</span>
+            </div>
+            <div class="rec-detail-item">
+              <span class="rec-detail-label">Precip</span>
+              <span class="rec-detail-value">4%</span>
+            </div>
+          </div>
+          <div class="rec-expand">Tap for detail ↓</div>
+        </div>
+
+        <!-- Temperature -->
+        <div class="temp-card">
+          <div class="temp-card-label">Temperature</div>
+          <div class="temp-row">
+            <span class="temp-current">54</span>
+            <span class="temp-unit">°F</span>
+            <div class="temp-meta">
+              <span class="temp-feels">Feels 47° on the bike</span>
+              <span class="temp-hilo">H 72° · L 48°</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wind -->
+        <div class="wind-card">
+          <div class="wind-card-label">Wind</div>
+          <div class="wind-main">
+            <span class="wind-speed-big">12</span>
+            <span class="wind-speed-unit">mph</span>
+            <div class="wind-arrow-big">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="transform: rotate(270deg);">
+                <path d="M12 4l-6 8h4v8h4v-8h4l-6-8z" fill="#5C5F66"/>
+              </svg>
+            </div>
+            <span style="font-size: 13px; font-weight: 400; color: var(--text-secondary);">W</span>
+          </div>
+          <div class="wind-context">Steady from the west, holding through the morning. Easy out-and-back planning.</div>
+          <div class="wind-gust">Gusts to 18mph · Crosswind exposure: low</div>
+        </div>
+
+        <!-- Hourly Forecast -->
+        <div class="hourly-section">
+          <div class="hourly-label">Hourly forecast</div>
+          <div class="hourly-scroll">
+
+            <div class="hourly-cell now">
+              <span class="hourly-time">NOW</span>
+              <span class="hourly-temp">54°</span>
+              <div class="hourly-wind-arrow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="transform: rotate(270deg);"><path d="M6 1.5L3 6.5h2v4h2v-4h2L6 1.5z" fill="#5C5F66"/></svg>
+              </div>
+              <span class="hourly-wind-speed">12</span>
+              <span class="hourly-precip">4%</span>
+            </div>
+
+            <div class="hourly-cell">
+              <span class="hourly-time">7 AM</span>
+              <span class="hourly-temp">56°</span>
+              <div class="hourly-wind-arrow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="transform: rotate(270deg);"><path d="M6 1.5L3 6.5h2v4h2v-4h2L6 1.5z" fill="#5C5F66"/></svg>
+              </div>
+              <span class="hourly-wind-speed">12</span>
+              <span class="hourly-precip">3%</span>
+            </div>
+
+            <div class="hourly-cell">
+              <span class="hourly-time">8 AM</span>
+              <span class="hourly-temp">59°</span>
+              <div class="hourly-wind-arrow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="transform: rotate(270deg);"><path d="M6 1.5L3 6.5h2v4h2v-4h2L6 1.5z" fill="#5C5F66"/></svg>
+              </div>
+              <span class="hourly-wind-speed">13</span>
+              <span class="hourly-precip">2%</span>
+            </div>
+
+            <div class="hourly-cell">
+              <span class="hourly-time">9 AM</span>
+              <span class="hourly-temp">62°</span>
+              <div class="hourly-wind-arrow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="transform: rotate(260deg);"><path d="M6 1.5L3 6.5h2v4h2v-4h2L6 1.5z" fill="#5C5F66"/></svg>
+              </div>
+              <span class="hourly-wind-speed">14</span>
+              <span class="hourly-precip">2%</span>
+            </div>
+
+            <div class="hourly-cell">
+              <span class="hourly-time">10 AM</span>
+              <span class="hourly-temp">65°</span>
+              <div class="hourly-wind-arrow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="transform: rotate(255deg);"><path d="M6 1.5L3 6.5h2v4h2v-4h2L6 1.5z" fill="#5C5F66"/></svg>
+              </div>
+              <span class="hourly-wind-speed">16</span>
+              <span class="hourly-precip">5%</span>
+            </div>
+
+            <div class="hourly-cell">
+              <span class="hourly-time">11 AM</span>
+              <span class="hourly-temp">68°</span>
+              <div class="hourly-wind-arrow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="transform: rotate(250deg);"><path d="M6 1.5L3 6.5h2v4h2v-4h2L6 1.5z" fill="#5C5F66"/></svg>
+              </div>
+              <span class="hourly-wind-speed">18</span>
+              <span class="hourly-precip">8%</span>
+            </div>
+
+            <div class="hourly-cell">
+              <span class="hourly-time">12 PM</span>
+              <span class="hourly-temp">70°</span>
+              <div class="hourly-wind-arrow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="transform: rotate(240deg);"><path d="M6 1.5L3 6.5h2v4h2v-4h2L6 1.5z" fill="#5C5F66"/></svg>
+              </div>
+              <span class="hourly-wind-speed">20</span>
+              <span class="hourly-precip">12%</span>
+            </div>
+
+            <div class="hourly-cell">
+              <span class="hourly-time">1 PM</span>
+              <span class="hourly-temp">71°</span>
+              <div class="hourly-wind-arrow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="transform: rotate(235deg);"><path d="M6 1.5L3 6.5h2v4h2v-4h2L6 1.5z" fill="#5C5F66"/></svg>
+              </div>
+              <span class="hourly-wind-speed">22</span>
+              <span class="hourly-precip">15%</span>
+            </div>
+
+            <div class="hourly-cell">
+              <span class="hourly-time">2 PM</span>
+              <span class="hourly-temp">72°</span>
+              <div class="hourly-wind-arrow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="transform: rotate(230deg);"><path d="M6 1.5L3 6.5h2v4h2v-4h2L6 1.5z" fill="#5C5F66"/></svg>
+              </div>
+              <span class="hourly-wind-speed">22</span>
+              <span class="hourly-precip">18%</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 7-Day Forecast -->
+        <div class="daily-section">
+          <div class="daily-label">7-day outlook</div>
+
+          <div class="daily-row">
+            <span class="daily-day">Today</span>
+            <span class="daily-icon">☀️</span>
+            <div class="daily-temp-range">
+              <span class="daily-hi">72°</span>
+              <div class="daily-bar-wrap"><div class="daily-bar" style="left:30%;width:55%;"></div></div>
+              <span class="daily-lo">48°</span>
+            </div>
+            <span class="daily-wind">12-22</span>
+            <span class="daily-precip">18%</span>
+          </div>
+
+          <div class="daily-row">
+            <span class="daily-day">Mon</span>
+            <span class="daily-icon">⛅</span>
+            <div class="daily-temp-range">
+              <span class="daily-hi">68°</span>
+              <div class="daily-bar-wrap"><div class="daily-bar" style="left:25%;width:45%;"></div></div>
+              <span class="daily-lo">45°</span>
+            </div>
+            <span class="daily-wind">8-14</span>
+            <span class="daily-precip">22%</span>
+          </div>
+
+          <div class="daily-row faded">
+            <span class="daily-day">Tue</span>
+            <span class="daily-icon">🌧️</span>
+            <div class="daily-temp-range">
+              <span class="daily-hi">62°</span>
+              <div class="daily-bar-wrap"><div class="daily-bar" style="left:20%;width:38%;"></div></div>
+              <span class="daily-lo">44°</span>
+            </div>
+            <span class="daily-wind">10-18</span>
+            <span class="daily-precip">65%</span>
+          </div>
+
+          <div class="daily-row faded">
+            <span class="daily-day">Wed</span>
+            <span class="daily-icon">🌧️</span>
+            <div class="daily-temp-range">
+              <span class="daily-hi">58°</span>
+              <div class="daily-bar-wrap"><div class="daily-bar" style="left:15%;width:35%;"></div></div>
+              <span class="daily-lo">42°</span>
+            </div>
+            <span class="daily-wind">14-24</span>
+            <span class="daily-precip">78%</span>
+          </div>
+
+          <div class="daily-row faded">
+            <span class="daily-day">Thu</span>
+            <span class="daily-icon">⛅</span>
+            <div class="daily-temp-range">
+              <span class="daily-hi">65°</span>
+              <div class="daily-bar-wrap"><div class="daily-bar" style="left:22%;width:40%;"></div></div>
+              <span class="daily-lo">43°</span>
+            </div>
+            <span class="daily-wind">10-16</span>
+            <span class="daily-precip">30%</span>
+          </div>
+
+          <div class="daily-row faded">
+            <span class="daily-day">Fri</span>
+            <span class="daily-icon">☀️</span>
+            <div class="daily-temp-range">
+              <span class="daily-hi">70°</span>
+              <div class="daily-bar-wrap"><div class="daily-bar" style="left:28%;width:48%;"></div></div>
+              <span class="daily-lo">46°</span>
+            </div>
+            <span class="daily-wind">6-12</span>
+            <span class="daily-precip">8%</span>
+          </div>
+
+          <div class="daily-row faded">
+            <span class="daily-day">Sat</span>
+            <span class="daily-icon">☀️</span>
+            <div class="daily-temp-range">
+              <span class="daily-hi">74°</span>
+              <div class="daily-bar-wrap"><div class="daily-bar" style="left:32%;width:50%;"></div></div>
+              <span class="daily-lo">50°</span>
+            </div>
+            <span class="daily-wind">8-14</span>
+            <span class="daily-precip">5%</span>
+          </div>
+
+          <div class="daily-confidence">Less reliable beyond 48 hrs</div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Navigation -->
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke-linejoin="round"/>
+          </svg>
+          <span>Forecast</span>
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#B2B2B2" stroke-width="1.5">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke-linejoin="round"/>
+          </svg>
+          <span>Chat</span>
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#B2B2B2" stroke-width="1.5">
+            <circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
+          </svg>
+          <span>Profile</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

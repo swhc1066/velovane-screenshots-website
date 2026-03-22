@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeloVane — Paywall & Upgrade Prompts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vv-blue: #5BA4D4;
+    --vv-blue-light: #E8F2FA;
+    --vv-blue-mid: #8FC1E2;
+    --vv-blue-dark: #3A7BAD;
+    --vv-blue-darker: #265A82;
+    --text-primary: #000000;
+    --text-secondary: #5C5F66;
+    --text-tertiary: #B2B2B2;
+    --surface-white: #FFFFFF;
+    --surface-light: #F8F9FA;
+    --surface-dark: #111111;
+    --n50: #F8F9FA;
+    --n100: #F1F3F5;
+    --n200: #E5E5E5;
+    --n300: #D4D4D4;
+    --n400: #B2B2B2;
+    --n600: #5C5F66;
+    --go-light: #E8F5E9;
+    --go-mid: #4CAF50;
+    --go-dark: #2E7D32;
+    --caution-light: #FFF8E1;
+    --caution-dark: #F57F17;
+    --f-mono: "Geist Mono", "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--f-mono);
+    background: #E5E5E5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .page-subtitle {
+    font-size: 11px;
+    font-weight: 300;
+    color: #999;
+    margin-bottom: 40px;
+    text-align: center;
+    max-width: 500px;
+    line-height: 1.6;
+  }
+
+  .screens-row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+
+  .screen-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .screen-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #888;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .screen-desc {
+    font-size: 10px;
+    font-weight: 300;
+    color: #aaa;
+    margin-bottom: 14px;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 320px;
+  }
+
+  /* Phone frame */
+  .phone-frame {
+    width: 390px;
+    height: 844px;
+    background: var(--surface-white);
+    border-radius: 44px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.08);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 54px;
+    padding: 14px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .status-time {
+    font-family: var(--f-mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons svg { width: 16px; height: 16px; fill: currentColor; color: var(--text-primary); }
+
+  /* Top bar with close */
+  .top-bar {
+    padding: 8px 24px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--n100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .close-btn svg {
+    width: 14px;
+    height: 14px;
+    color: var(--text-secondary);
+  }
+  .restore-link {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--vv-blue-dark);
+  }
+
+  /* Scrollable content */
+  .screen-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 24px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen-content::-webkit-scrollbar { display: none; }
+
+  /* Paywall header */
+  .paywall-header {
+    text-align: center;
+    padding: 8px 0 24px;
+  }
+  .paywall-icon {
+    margin-bottom: 16px;
+  }
+  .paywall-title {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .paywall-subtitle {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  /* Feature comparison */
+  .comparison-table {
+    width: 100%;
+    margin-bottom: 24px;
+  }
+  .comp-header {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--n200);
+    margin-bottom: 2px;
+  }
+  .comp-header-feature {
+    flex: 1;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+  .comp-header-tier {
+    width: 64px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .comp-header-tier.free { color: var(--text-tertiary); }
+  .comp-header-tier.premium { color: var(--vv-blue-dark); }
+
+  .comp-row {
+    display: flex;
+    align-items: center;
+    padding: 11px 0;
+    border-bottom: 0.5px solid var(--n100);
+  }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-feature {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+  .comp-feature-sub {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    display: block;
+    margin-top: 1px;
+  }
+  .comp-check {
+    width: 64px;
+    text-align: center;
+    font-size: 14px;
+  }
+  .comp-check.yes { color: var(--go-dark); }
+  .comp-check.no { color: var(--n300); }
+  .comp-check.limited { 
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+  }
+
+  /* Pricing cards */
+  .pricing-section {
+    margin-bottom: 20px;
+  }
+  .pricing-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+  }
+
+  .price-card {
+    border: 1.5px solid var(--n200);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+  }
+  .price-card.selected {
+    border-color: var(--text-primary);
+    background: var(--n50);
+  }
+
+  .price-radio {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--n300);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .price-card.selected .price-radio {
+    border-color: var(--text-primary);
+  }
+  .price-radio-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: transparent;
+  }
+  .price-card.selected .price-radio-dot {
+    background: var(--text-primary);
+  }
+
+  .price-info { flex: 1; }
+  .price-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+  .price-detail {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    line-height: 1.4;
+  }
+  .price-amount {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .price-number {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+  .price-period {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+  }
+
+  .price-badge {
+    position: absolute;
+    top: -9px;
+    right: 16px;
+    background: var(--text-primary);
+    color: white;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+  .savings-badge {
+    position: absolute;
+    top: -9px;
+    left: 16px;
+    background: var(--go-light);
+    color: var(--go-dark);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+
+  /* CTA area */
+  .cta-area {
+    padding: 16px 0 32px;
+  }
+  .cta-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--f-mono);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    background: var(--text-primary);
+    color: white;
+  }
+  .cta-sub {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+  }
+
+  /* ============================================ */
+  /* CONTEXTUAL UPGRADE PROMPT (bottom sheet)     */
+  /* ============================================ */
+  .phone-frame-overlay {
+    width: 390px;
+    height: 844px;
+    background: var(--surface-white);
+    border-radius: 44px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.08);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Dimmed dashboard behind */
+  .dashboard-dimmed {
+    flex: 1;
+    background: var(--surface-white);
+    opacity: 0.35;
+    padding: 0 24px;
+    overflow: hidden;
+  }
+  .dim-location {
+    padding: 66px 0 14px;
+    border-bottom: 0.5px solid var(--n200);
+  }
+  .dim-label {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 4px;
+  }
+  .dim-name {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .dim-card {
+    margin: 14px 0;
+    border: 1.5px dashed var(--n300);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  .dim-card-icon {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  .dim-card-text {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .dim-card-sub {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+  }
+  .dim-temp {
+    padding: 16px 0;
+    border-bottom: 0.5px solid var(--n200);
+  }
+  .dim-temp-big {
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+
+  /* Bottom sheet overlay */
+  .bottom-sheet-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .bottom-sheet {
+    width: 100%;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    padding: 12px 24px 40px;
+  }
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--n300);
+    margin: 0 auto 20px;
+  }
+  .sheet-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sheet-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--go-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .sheet-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .sheet-desc {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* Mini preview card */
+  .sheet-preview {
+    background: var(--go-light);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+  .sheet-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .sp-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--go-dark);
+  }
+  .sp-status {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--go-dark);
+  }
+  .sp-window {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .sp-reason {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .sp-blur {
+    filter: blur(3px);
+    opacity: 0.6;
+    user-select: none;
+  }
+
+  .sheet-features {
+    margin-bottom: 20px;
+  }
+  .sf-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+  .sf-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--vv-blue-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .sf-check svg {
+    width: 10px;
+    height: 10px;
+    color: var(--vv-blue-dark);
+  }
+  .sf-text {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+
+  .sheet-cta {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--f-mono);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    background: var(--text-primary);
+    color: white;
+    margin-bottom: 8px;
+  }
+  .sheet-dismiss {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 6px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">VeloVane — Paywall & Upgrade Prompts</div>
+<div class="page-subtitle">Two surfaces: full paywall screen (settings/profile) and contextual bottom sheet (tapping a locked feature). No dark patterns — dismiss is always obvious.</div>
+
+<div class="screens-row">
+
+  <!-- ======================== -->
+  <!-- FULL PAYWALL SCREEN      -->
+  <!-- ======================== -->
+  <div class="screen-wrap">
+    <div class="screen-label">Full Paywall</div>
+    <div class="screen-desc">Accessed from profile or "See all plans." Honest comparison, annual highlighted.</div>
+    <div class="phone-frame">
+
+      <div class="status-bar">
+        <span class="status-time">6:42</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 16 16"><path d="M1 12h2V8H1v4zm3 0h2V4H4v8zm3 0h2V6H7v6zm3 0h2V2h-2v10zm3 0h2V5h-2v7z"/></svg>
+        </div>
+      </div>
+
+      <!-- Top bar -->
+      <div class="top-bar">
+        <div class="close-btn">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1l12 12M13 1L1 13"/></svg>
+        </div>
+        <span class="restore-link">Restore purchases</span>
+      </div>
+
+      <div class="screen-content">
+
+        <!-- Header -->
+        <div class="paywall-header">
+          <div class="paywall-icon">
+            <svg width="40" height="42" viewBox="0 0 27 28" fill="none">
+              <path d="M0 8.40756V0.784399C0 0.354434 0.348624 0 0.784399 0H7.01308C7.29197 0 7.55345 0.151068 7.6929 0.389291L18.5524 19.2032C18.6221 19.3194 18.657 19.4588 18.657 19.5925V27.2156C18.657 27.6456 18.3084 28 17.8726 28H11.6439C11.365 28 11.1035 27.8489 10.9641 27.6107L0.104599 8.79685C0.0348755 8.68064 0 8.54119 0 8.40756Z" fill="#5BA4D4"/>
+              <path d="M18.9185 2.00462L22.12 0.156941C22.2827 0.0639758 22.486 0.0639758 22.6487 0.156941L25.8502 2.00462C26.0129 2.09759 26.1175 2.2719 26.1175 2.46365V10.4703C26.1175 10.662 26.0187 10.8363 25.8502 10.9293L19.4472 14.6247C19.0928 14.828 18.6512 14.5724 18.6512 14.1657V2.46365C18.6512 2.2719 18.75 2.09759 18.9185 2.00462Z" fill="#5BA4D4"/>
+            </svg>
+          </div>
+          <div class="paywall-title">Unlock your ride advisor</div>
+          <div class="paywall-subtitle">Premium adds the intelligence layer — personalized recommendations, notifications, and learning that improves over time.</div>
+        </div>
+
+        <!-- Feature comparison -->
+        <div class="comparison-table">
+          <div class="comp-header">
+            <div class="comp-header-feature">Feature</div>
+            <div class="comp-header-tier free">Free</div>
+            <div class="comp-header-tier premium">Pro</div>
+          </div>
+
+          <div class="comp-row">
+            <div class="comp-feature">Weather dashboard<span class="comp-feature-sub">48hr hourly + 7-day daily</span></div>
+            <div class="comp-check yes">✓</div>
+            <div class="comp-check yes">✓</div>
+          </div>
+
+          <div class="comp-row">
+            <div class="comp-feature">Cycling feels-like temp<span class="comp-feature-sub">Adjusted for your riding speed</span></div>
+            <div class="comp-check yes">✓</div>
+            <div class="comp-check yes">✓</div>
+          </div>
+
+          <div class="comp-row">
+            <div class="comp-feature">Wind context<span class="comp-feature-sub">Out-and-back or fixed-route</span></div>
+            <div class="comp-check yes">✓</div>
+            <div class="comp-check yes">✓</div>
+          </div>
+
+          <div class="comp-row">
+            <div class="comp-feature">Dawn/dusk overlay<span class="comp-feature-sub">Light conditions on timeline</span></div>
+            <div class="comp-check yes">✓</div>
+            <div class="comp-check yes">✓</div>
+          </div>
+
+          <div class="comp-row">
+            <div class="comp-feature">Saved locations<span class="comp-feature-sub"></span></div>
+            <div class="comp-check limited">1</div>
+            <div class="comp-check limited" style="color: var(--vv-blue-dark); font-weight: 500;">5</div>
+          </div>
+
+          <div class="comp-row">
+            <div class="comp-feature">AI ride recommendations<span class="comp-feature-sub">Go/caution/skip with best window</span></div>
+            <div class="comp-check no">—</div>
+            <div class="comp-check yes">✓</div>
+          </div>
+
+          <div class="comp-row">
+            <div class="comp-feature">Morning notifications<span class="comp-feature-sub">Daily ride recommendation push</span></div>
+            <div class="comp-check no">—</div>
+            <div class="comp-check yes">✓</div>
+          </div>
+
+          <div class="comp-row">
+            <div class="comp-feature">AI chat<span class="comp-feature-sub">Ask questions about conditions</span></div>
+            <div class="comp-check no">—</div>
+            <div class="comp-check yes">✓</div>
+          </div>
+
+          <div class="comp-row">
+            <div class="comp-feature">Behavioral learning<span class="comp-feature-sub">Recommendations improve over time</span></div>
+            <div class="comp-check no">—</div>
+            <div class="comp-check yes">✓</div>
+          </div>
+
+          <div class="comp-row">
+            <div class="comp-feature">7-day hourly forecast<span class="comp-feature-sub">Full hourly detail beyond 48hrs</span></div>
+            <div class="comp-check no">—</div>
+            <div class="comp-check yes">✓</div>
+          </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="pricing-section">
+          <div class="pricing-label">Choose your plan</div>
+
+          <div class="price-card selected">
+            <div class="savings-badge">Save 44%</div>
+            <div class="price-badge">Recommended</div>
+            <div class="price-radio"><div class="price-radio-dot"></div></div>
+            <div class="price-info">
+              <div class="price-name">Annual</div>
+              <div class="price-detail">14-day free trial included<br>$1.67/mo effective</div>
+            </div>
+            <div class="price-amount">
+              <div class="price-number">$19.99</div>
+              <div class="price-period">/year</div>
+            </div>
+          </div>
+
+          <div class="price-card">
+            <div class="price-radio"><div class="price-radio-dot"></div></div>
+            <div class="price-info">
+              <div class="price-name">Monthly</div>
+              <div class="price-detail">No commitment, cancel anytime</div>
+            </div>
+            <div class="price-amount">
+              <div class="price-number">$2.99</div>
+              <div class="price-period">/month</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-area">
+          <div class="cta-btn">Start 14-day free trial</div>
+          <div class="cta-sub">Cancel anytime during trial — you won't be charged.<br>Subscription auto-renews after trial ends.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================= -->
+  <!-- CONTEXTUAL UPGRADE (Bottom Sheet) -->
+  <!-- ================================= -->
+  <div class="screen-wrap">
+    <div class="screen-label">Contextual Upgrade Prompt</div>
+    <div class="screen-desc">Shown when free user taps AI recommendation card. Max 1 per session. Blurred preview builds desire.</div>
+    <div class="phone-frame-overlay">
+
+      <!-- Dimmed dashboard behind -->
+      <div class="dashboard-dimmed">
+        <div class="dim-location">
+          <div class="dim-label">Current location</div>
+          <div class="dim-name">Omaha, NE</div>
+        </div>
+        <div class="dim-card">
+          <div class="dim-card-icon">🔒</div>
+          <div class="dim-card-text">AI recommendations</div>
+          <div class="dim-card-sub">Premium feature</div>
+        </div>
+        <div class="dim-temp">
+          <div class="dim-temp-big">54°F</div>
+        </div>
+      </div>
+
+      <!-- Overlay + Bottom Sheet -->
+      <div class="bottom-sheet-overlay">
+        <div class="bottom-sheet">
+          <div class="sheet-handle"></div>
+
+          <div class="sheet-header">
+            <div class="sheet-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="1.5">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="sheet-title">Your personal ride advisor</div>
+              <div class="sheet-desc">VeloVane can tell you exactly when to ride today — based on your preferences.</div>
+            </div>
+          </div>
+
+          <!-- Blurred preview -->
+          <div class="sheet-preview">
+            <div class="sheet-preview-header">
+              <div class="sp-dot"></div>
+              <span class="sp-status">Go — ride window</span>
+            </div>
+            <div class="sp-window">7:00 – 9:30 AM</div>
+            <div class="sp-reason sp-blur">Based on your 20mph wind limit and morning preference, steady 12mph from west</div>
+          </div>
+
+          <!-- Feature list -->
+          <div class="sheet-features">
+            <div class="sf-item">
+              <div class="sf-check"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div>
+              <span class="sf-text">Go/caution/skip ride recommendations</span>
+            </div>
+            <div class="sf-item">
+              <div class="sf-check"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div>
+              <span class="sf-text">Morning notification with best window</span>
+            </div>
+            <div class="sf-item">
+              <div class="sf-check"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div>
+              <span class="sf-text">Learns your patterns over time</span>
+            </div>
+          </div>
+
+          <div class="sheet-cta">Try free for 14 days</div>
+          <div class="sheet-dismiss">Not now</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
